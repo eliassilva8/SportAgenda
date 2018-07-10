@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">SportAgenda</string>
+    <string name="action_new_event">New event</string>
+    <string name="sport">Sport:</string>
+    <string name="date">Date:</string>
+    <string name="time">Time:</string>
+    <string name="local">Local:</string>
+    <string name="participants">Nº of Participants</string>
+    <string name="email_subject">SportAgenda event</string>
+    <string name="sport_field_empty">Sport field is empty!</string>
+    <string name="date_format">dd/MM/yy</string>
+    <string name="time_format">H:mm</string>
+</resources>
