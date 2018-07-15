@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -15,9 +16,11 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +38,7 @@ public class NewEditEvent extends AppCompatActivity {
     EditText mTimeInput;
     @BindView(R.id.participants_input_et)
     EditText mParticipantsInput;
+    Event mCurrentEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,60 +46,93 @@ public class NewEditEvent extends AppCompatActivity {
         setContentView(R.layout.activity_new_edit_event);
         ButterKnife.bind(this);
 
-        mDateInpute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
-                int year = c.get(Calendar.YEAR);
-                int month = c.get(Calendar.MONTH);
-                final int day = c.get(Calendar.DAY_OF_MONTH);
+        Intent intent = getIntent();
+        mCurrentEvent = intent.getParcelableExtra("event");
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(NewEditEvent.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        c.set(Calendar.YEAR, year);
-                        c.set(Calendar.MONTH, month);
-                        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        String dateFormat = getString(R.string.date_format);
-                        SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+        if(mCurrentEvent == null) {
+            mDateInpute.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Calendar c = Calendar.getInstance();
+                    int year = c.get(Calendar.YEAR);
+                    int month = c.get(Calendar.MONTH);
+                    final int day = c.get(Calendar.DAY_OF_MONTH);
 
-                        mDateInpute.setText(sdf.format(c.getTime()));
-                    }
-                }, year, month, day);
-                datePickerDialog.show();
-            }
-        });
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(NewEditEvent.this, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                            c.set(Calendar.YEAR, year);
+                            c.set(Calendar.MONTH, month);
+                            c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                            String dateFormat = getString(R.string.date_format);
+                            SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
 
-        mTimeInput.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
-                final int hour = c.get(Calendar.HOUR_OF_DAY);
-                int minute = c.get(Calendar.MINUTE);
-
-                TimePickerDialog timePickerDialog = new TimePickerDialog(NewEditEvent.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        c.set(Calendar.MINUTE, minute);
-                        String timeFormat = getString(R.string.time_format);
-                        SimpleDateFormat sdf = new SimpleDateFormat(timeFormat);
-
-                        mTimeInput.setText(sdf.format(c.getTime()));
-                    }
-                }, hour, minute, true);
-                timePickerDialog.show();
-            }
-        });
-
-        mDoneFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (setEmailIntent() != null) {
-                    startActivity(setEmailIntent());
+                            mDateInpute.setText(sdf.format(c.getTime()));
+                        }
+                    }, year, month, day);
+                    datePickerDialog.show();
                 }
-            }
-        });
+            });
+
+            mTimeInput.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Calendar c = Calendar.getInstance();
+                    final int hour = c.get(Calendar.HOUR_OF_DAY);
+                    int minute = c.get(Calendar.MINUTE);
+
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(NewEditEvent.this, new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                            c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                            c.set(Calendar.MINUTE, minute);
+                            String timeFormat = getString(R.string.time_format);
+                            SimpleDateFormat sdf = new SimpleDateFormat(timeFormat);
+
+                            mTimeInput.setText(sdf.format(c.getTime()));
+                        }
+                    }, hour, minute, true);
+                    timePickerDialog.show();
+                }
+            });
+
+            mDoneFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference events = database.getReference(getString(R.string.db_events));
+                    DatabaseReference eventKey = events.push();
+                    eventKey.child(getString(R.string.db_sports)).setValue(mSportInput.getText().toString());
+                    eventKey.child(getString(R.string.db_date)).setValue(mDateInpute.getText().toString());
+                    eventKey.child(getString(R.string.db_time)).setValue(mTimeInput.getText().toString());
+                    eventKey.child(getString(R.string.db_local)).setValue(mLocalInput.getText().toString());
+                    eventKey.child(getString(R.string.db_participants)).setValue(mParticipantsInput.getText().toString());
+
+                    if (setEmailIntent() != null) {
+                        startActivity(setEmailIntent());
+                    }
+                }
+            });
+        } else {
+            mDoneFab.setVisibility(View.GONE);
+
+            mSportInput.setText(mCurrentEvent.sports);
+            mDateInpute.setText(mCurrentEvent.date);
+            mTimeInput.setText(mCurrentEvent.time);
+            mLocalInput.setText(mCurrentEvent.local);
+            mParticipantsInput.setText(mCurrentEvent.participants);
+
+            mSportInput.setFocusable(false);
+            mSportInput.setClickable(false);
+            mDateInpute.setFocusable(false);
+            mDateInpute.setClickable(false);
+            mTimeInput.setFocusable(false);
+            mTimeInput.setClickable(false);
+            mLocalInput.setFocusable(false);
+            mLocalInput.setClickable(false);
+            mParticipantsInput.setFocusable(false);
+            mParticipantsInput.setClickable(false);
+        }
     }
 
     private Intent setEmailIntent() {

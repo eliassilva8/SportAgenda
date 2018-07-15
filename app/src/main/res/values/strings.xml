@@ -10,4 +10,10 @@
     <string name="sport_field_empty">Sport field is empty!</string>
     <string name="date_format">dd/MM/yy</string>
     <string name="time_format">H:mm</string>
+    <string name="db_events">events</string>
+    <string name="db_sports">sports</string>
+    <string name="db_date">date</string>
+    <string name="db_time">time</string>
+    <string name="db_local">local</string>
+    <string name="db_participants">participants</string>
 </resources>
