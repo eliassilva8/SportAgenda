@@ -2,24 +2,30 @@ package com.eliassilva.sportagenda;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,12 +36,15 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
     @BindView(R.id.events_list_recycler_view)
     RecyclerView mEventsRecyclerView;
     List<Event> mEvents = new ArrayList<>();
+    FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mEventsRecyclerView.setLayoutManager(layoutManager);
@@ -47,7 +56,8 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
 
         // Get a reference to our posts
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference ref = database.getReference("events");
+        final DatabaseReference events = database.getReference("events");
+        DatabaseReference userUid = events.child(mUser.getUid());
 
         ChildEventListener eventListener = new ChildEventListener() {
             @Override
@@ -77,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
 
             }
         };
-        ref.addChildEventListener(eventListener);
+        userUid.addChildEventListener(eventListener);
 
         mNewEventFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,10 +100,32 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
 
     @Override
     public void onClick(Event event) {
-        //Event eventToSend = new Event(event.getSports(), event.getDate(), event.getTime(), event.getLocal(), event.getParticipants());
         Intent intent = new Intent(MainActivity.this, NewEditEvent.class);
         intent.putExtra("event", event);
-        System.out.println("event: " + event);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_pop_up_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.log_out) {
+            AuthUI.getInstance()
+                    .signOut(this)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+            return true;
+        } else {
+            return false;
+        }
     }
 }

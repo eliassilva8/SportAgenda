@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -39,6 +41,7 @@ public class NewEditEvent extends AppCompatActivity {
     @BindView(R.id.participants_input_et)
     EditText mParticipantsInput;
     Event mCurrentEvent;
+    FirebaseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,8 @@ public class NewEditEvent extends AppCompatActivity {
 
         Intent intent = getIntent();
         mCurrentEvent = intent.getParcelableExtra("event");
+
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if(mCurrentEvent == null) {
             mDateInpute.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +106,8 @@ public class NewEditEvent extends AppCompatActivity {
                 public void onClick(View v) {
                     FirebaseDatabase database = FirebaseDatabase.getInstance();
                     DatabaseReference events = database.getReference(getString(R.string.db_events));
-                    DatabaseReference eventKey = events.push();
+                    DatabaseReference user = events.child(mUser.getUid());
+                    DatabaseReference eventKey = user.push();
                     eventKey.child(getString(R.string.db_sports)).setValue(mSportInput.getText().toString());
                     eventKey.child(getString(R.string.db_date)).setValue(mDateInpute.getText().toString());
                     eventKey.child(getString(R.string.db_time)).setValue(mTimeInput.getText().toString());
