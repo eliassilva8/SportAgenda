@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,13 +44,17 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
     List<Event> mEvents = new ArrayList<>();
     List<String> mEventsKeys = new ArrayList<>();
     FirebaseUser mUser;
-    ArrayList<Long> dates = new ArrayList<>();
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
