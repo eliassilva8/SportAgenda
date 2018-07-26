@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
     @BindView(R.id.events_list_recycler_view)
     RecyclerView mEventsRecyclerView;
     List<Event> mEvents = new ArrayList<>();
+    List<String> mEventsKeys = new ArrayList<>();
     FirebaseUser mUser;
     ArrayList<Long> dates = new ArrayList<>();
 
@@ -56,10 +57,10 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
         mEventsRecyclerView.setHasFixedSize(true);
         mEventsRecyclerView.setNestedScrollingEnabled(false);
 
-        final EventAdapter mAdapter = new EventAdapter(mEvents, this);
+        final EventAdapter mAdapter = new EventAdapter(mEvents, this, mEventsKeys);
         mEventsRecyclerView.setAdapter(mAdapter);
 
-        FirebaseDatabase database = FirebaseDatabaseSingleton.getInstance();
+        final FirebaseDatabase database = FirebaseDatabaseSingleton.getInstance();
         final DatabaseReference events = database.getReference(getString(R.string.db_events));
         DatabaseReference userUid = events.child(mUser.getUid());
         Query orderByDate = userUid.orderByChild(getString(R.string.db_date_in_milliseconds));
@@ -68,8 +69,10 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Event newEvent = dataSnapshot.getValue(Event.class);
+                String eventKey = dataSnapshot.getKey();
                 mEvents.add(newEvent);
-                mAdapter.setEventData(mEvents);
+                mEventsKeys.add(eventKey);
+                mAdapter.setEventData(mEvents, mEventsKeys);
             }
 
             @Override
@@ -104,9 +107,10 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
     }
 
     @Override
-    public void onClick(Event event) {
+    public void onClick(Event event, String eventKey) {
         Intent intent = new Intent(MainActivity.this, NewEditEvent.class);
-        intent.putExtra("event", event);
+        intent.putExtra(getString(R.string.event), event);
+        intent.putExtra(getString(R.string.eventKey), eventKey);
         startActivity(intent);
     }
 

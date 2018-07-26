@@ -24,4 +24,7 @@
     <string name="db_date_in_milliseconds">milliseconds</string>
     <string name="service_name">EventService</string>
     <string name="service_name_background">EventServiceBackground</string>
+    <string name="event">event</string>
+    <string name="eventKey">eventKey</string>
+    <string name="event_deleted">Event deleted!</string>
 </resources>

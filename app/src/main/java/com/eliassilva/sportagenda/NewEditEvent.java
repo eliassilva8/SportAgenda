@@ -33,6 +33,8 @@ import butterknife.ButterKnife;
 public class NewEditEvent extends AppCompatActivity {
     @BindView(R.id.done_fab)
     FloatingActionButton mDoneFab;
+    @BindView(R.id.delete_fab)
+    FloatingActionButton mDeleteFab;
     @BindView(R.id.sport_input_et)
     EditText mSportInput;
     @BindView(R.id.local_input_et)
@@ -45,6 +47,7 @@ public class NewEditEvent extends AppCompatActivity {
     EditText mParticipantsInput;
     Event mCurrentEvent;
     FirebaseUser mUser;
+    String mCurrentEventKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +56,13 @@ public class NewEditEvent extends AppCompatActivity {
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
-        mCurrentEvent = intent.getParcelableExtra("event");
+        mCurrentEvent = intent.getParcelableExtra(getString(R.string.event));
+        mCurrentEventKey = intent.getStringExtra(getString(R.string.eventKey));
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if(mCurrentEvent == null) {
+            mDeleteFab.setVisibility(View.GONE);
             mDateInpute.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -107,10 +112,8 @@ public class NewEditEvent extends AppCompatActivity {
             mDoneFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FirebaseDatabase database = FirebaseDatabaseSingleton.getInstance();
-                    DatabaseReference events = database.getReference(getString(R.string.db_events));
-                    DatabaseReference user = events.child(mUser.getUid());
-                    DatabaseReference eventKey = user.push();
+                    DatabaseReference userEvents = getDatabaseReference();
+                    DatabaseReference eventKey = userEvents.push();
                     eventKey.child(getString(R.string.db_sports)).setValue(mSportInput.getText().toString());
                     eventKey.child(getString(R.string.db_date)).setValue(mDateInpute.getText().toString());
                     eventKey.child(getString(R.string.db_time)).setValue(mTimeInput.getText().toString());
@@ -131,6 +134,8 @@ public class NewEditEvent extends AppCompatActivity {
                     if (setEmailIntent() != null) {
                         startActivity(setEmailIntent());
                     }
+                    Intent intent = new Intent(NewEditEvent.this, MainActivity.class);
+                    startActivity(intent);
                 }
             });
         } else {
@@ -152,7 +157,26 @@ public class NewEditEvent extends AppCompatActivity {
             mLocalInput.setClickable(false);
             mParticipantsInput.setFocusable(false);
             mParticipantsInput.setClickable(false);
+
+            mDeleteFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseReference userEvents = getDatabaseReference();
+                    DatabaseReference eventToDelete = userEvents.child(mCurrentEventKey);
+                    eventToDelete.removeValue();
+                    Toast.makeText(NewEditEvent.this, getString(R.string.event_deleted), Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(NewEditEvent.this, MainActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
+    }
+
+    private DatabaseReference getDatabaseReference() {
+        FirebaseDatabase database = FirebaseDatabaseSingleton.getInstance();
+        DatabaseReference events = database.getReference(getString(R.string.db_events));
+        DatabaseReference userEvents = events.child(mUser.getUid());
+        return userEvents;
     }
 
     private Intent setEmailIntent() {

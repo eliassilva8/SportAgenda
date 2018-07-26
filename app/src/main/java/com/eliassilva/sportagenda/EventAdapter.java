@@ -7,7 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -16,16 +19,18 @@ import butterknife.ButterKnife;
  * Created by Elias on 12/07/2018.
  */
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder>{
+    private List<String> mEventsKeys;
     private List<Event> mEvents;
     private EventAdapterOnClickHandler mOnClickHandler;
 
-    public EventAdapter(List<Event> events, EventAdapterOnClickHandler onClickHandler) {
+    public EventAdapter(List<Event> events, EventAdapterOnClickHandler onClickHandler, List<String> eventsKeys) {
+        this.mEventsKeys = eventsKeys;
         this.mEvents = events;
         this.mOnClickHandler = onClickHandler;
     }
 
     public interface EventAdapterOnClickHandler {
-        void onClick(Event event);
+        void onClick(Event event, String eventKey);
     }
 
     @NonNull
@@ -56,7 +61,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         return mEvents == null ? 0 : mEvents.size();
     }
 
-    public void setEventData(List<Event> events) {
+    public void setEventData(List<Event> events, List<String> eventsKeys) {
+        mEventsKeys = eventsKeys;
         mEvents = events;
         notifyDataSetChanged();
     }
@@ -77,7 +83,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         @Override
         public void onClick(View v) {
             Event eventClicked = mEvents.get(getAdapterPosition());
-            mOnClickHandler.onClick(eventClicked);
+            String eventClickedKey = mEventsKeys.get(getAdapterPosition());
+            mOnClickHandler.onClick(eventClicked, eventClickedKey);
         }
     }
 }
