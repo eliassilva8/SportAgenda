@@ -23,8 +23,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
     RecyclerView mEventsRecyclerView;
     List<Event> mEvents = new ArrayList<>();
     FirebaseUser mUser;
+    ArrayList<Long> dates = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +59,10 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
         final EventAdapter mAdapter = new EventAdapter(mEvents, this);
         mEventsRecyclerView.setAdapter(mAdapter);
 
-        // Get a reference to our posts
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference events = database.getReference("events");
+        FirebaseDatabase database = FirebaseDatabaseSingleton.getInstance();
+        final DatabaseReference events = database.getReference(getString(R.string.db_events));
         DatabaseReference userUid = events.child(mUser.getUid());
+        Query orderByDate = userUid.orderByChild(getString(R.string.db_date_in_milliseconds));
 
         ChildEventListener eventListener = new ChildEventListener() {
             @Override
@@ -87,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
 
             }
         };
-        userUid.addChildEventListener(eventListener);
+        orderByDate.addChildEventListener(eventListener);
 
         mNewEventFab.setOnClickListener(new View.OnClickListener() {
             @Override

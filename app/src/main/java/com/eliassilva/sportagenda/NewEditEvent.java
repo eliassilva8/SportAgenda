@@ -3,6 +3,7 @@ package com.eliassilva.sportagenda;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -21,8 +22,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -104,7 +107,7 @@ public class NewEditEvent extends AppCompatActivity {
             mDoneFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    FirebaseDatabase database = FirebaseDatabaseSingleton.getInstance();
                     DatabaseReference events = database.getReference(getString(R.string.db_events));
                     DatabaseReference user = events.child(mUser.getUid());
                     DatabaseReference eventKey = user.push();
@@ -113,6 +116,17 @@ public class NewEditEvent extends AppCompatActivity {
                     eventKey.child(getString(R.string.db_time)).setValue(mTimeInput.getText().toString());
                     eventKey.child(getString(R.string.db_local)).setValue(mLocalInput.getText().toString());
                     eventKey.child(getString(R.string.db_participants)).setValue(mParticipantsInput.getText().toString());
+
+                    String dateAndTime = mDateInpute.getText().toString() + " " + mTimeInput.getText().toString();
+                    SimpleDateFormat format = new SimpleDateFormat(getString(R.string.date_format) + " " + getString(R.string.time_format));
+                    Date dateFormated = null;
+                    try {
+                        dateFormated = format.parse(dateAndTime);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    long milliseconds = dateFormated.getTime();
+                    eventKey.child(getString(R.string.db_date_in_milliseconds)).setValue(milliseconds);
 
                     if (setEmailIntent() != null) {
                         startActivity(setEmailIntent());

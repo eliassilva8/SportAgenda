@@ -22,7 +22,7 @@ allprojects {
         jcenter()
     }
     ext {
-        androidSupportVersion = "27.1.1"
+        androidSupportVersion = "27.1.0"
         butterKnifeVersion = "8.8.1"
     }
 }

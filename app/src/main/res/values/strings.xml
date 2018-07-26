@@ -19,8 +19,9 @@
     <string name="auth_failed">Error trying to sign in</string>
     <string name="email_label">Email:</string>
     <string name="password_label">Password:</string>
-    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
-    <string name="facebook_application_id" translatable="false">FACEBOOK_APP_ID</string>
-    <string name="facebook_login_protocol_scheme" translatable="false">fbYOUR_APP_ID</string>
     <string name="log_out">Log out</string>
+    <string name="next_event">Next event</string>
+    <string name="db_date_in_milliseconds">milliseconds</string>
+    <string name="service_name">EventService</string>
+    <string name="service_name_background">EventServiceBackground</string>
 </resources>
