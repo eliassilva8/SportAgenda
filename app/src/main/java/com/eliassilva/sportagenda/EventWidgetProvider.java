@@ -19,7 +19,10 @@ public class EventWidgetProvider extends AppWidgetProvider {
         EventService.startActionUpdateEvent(context);
     }
 
-
+    @Override
+    public void onEnabled(Context context) {
+        super.onEnabled(context);
+    }
 
     public static void updateEventWidget(Context context, int[] appWidgetIds, AppWidgetManager appWidgetManager, Event nextEvent, String nextEventKey) {
         for (int appWidgetId : appWidgetIds) {

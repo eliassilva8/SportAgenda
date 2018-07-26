@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -15,11 +16,14 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -43,6 +47,10 @@ public class LoginActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.METHOD, response.getProviderType());
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
             } else {

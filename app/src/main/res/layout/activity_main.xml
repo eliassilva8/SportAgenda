@@ -51,7 +51,7 @@
             android:clipToPadding="false"
             android:padding="@dimen/recycler_view_padding"
             android:scrollbarStyle="outsideOverlay"
-            ads:layout_constraintBottom_toTopOf="@+id/new_event_fab"
+            ads:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
