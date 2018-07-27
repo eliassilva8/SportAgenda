@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
     List<String> mEventsKeys = new ArrayList<>();
     FirebaseUser mUser;
     private AdView mAdView;
+    FirebaseDatabase mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,64 +55,72 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (mUser == null) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        } else {
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mEventsRecyclerView.setLayoutManager(layoutManager);
-        mEventsRecyclerView.setHasFixedSize(true);
-        mEventsRecyclerView.setNestedScrollingEnabled(false);
+            mAdView = findViewById(R.id.adView);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
 
-        final EventAdapter mAdapter = new EventAdapter(mEvents, this, mEventsKeys);
-        mEventsRecyclerView.setAdapter(mAdapter);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+            mEventsRecyclerView.setLayoutManager(layoutManager);
+            mEventsRecyclerView.setHasFixedSize(true);
+            mEventsRecyclerView.setNestedScrollingEnabled(false);
 
-        final FirebaseDatabase database = FirebaseDatabaseSingleton.getInstance();
-        final DatabaseReference events = database.getReference(getString(R.string.db_events));
-        DatabaseReference userUid = events.child(mUser.getUid());
-        Query orderByDate = userUid.orderByChild(getString(R.string.db_date_in_milliseconds));
+            final EventAdapter mAdapter = new EventAdapter(mEvents, this, mEventsKeys);
+            mEventsRecyclerView.setAdapter(mAdapter);
 
-        ChildEventListener eventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Event newEvent = dataSnapshot.getValue(Event.class);
-                String eventKey = dataSnapshot.getKey();
-                mEvents.add(newEvent);
-                mEventsKeys.add(eventKey);
-                mAdapter.setEventData(mEvents, mEventsKeys);
+            if (mDatabase == null) {
+                mDatabase = FirebaseDatabase.getInstance();
+                mDatabase.setPersistenceEnabled(true);
             }
+            final DatabaseReference events = mDatabase.getReference(getString(R.string.db_events));
+            DatabaseReference userUid = events.child(mUser.getUid());
+            Query orderByDate = userUid.orderByChild(getString(R.string.db_date_in_milliseconds));
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            ChildEventListener eventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Event newEvent = dataSnapshot.getValue(Event.class);
+                    String eventKey = dataSnapshot.getKey();
+                    mEvents.add(newEvent);
+                    mEventsKeys.add(eventKey);
+                    mAdapter.setEventData(mEvents, mEventsKeys);
+                }
 
-            }
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
 
-            }
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
 
-            }
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                }
 
-            }
-        };
-        orderByDate.addChildEventListener(eventListener);
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-        mNewEventFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, NewEditEvent.class);
-                startActivity(intent);
-            }
-        });
+                }
+            };
+            orderByDate.addChildEventListener(eventListener);
+
+            mNewEventFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, NewEditEvent.class);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override

@@ -190,7 +190,7 @@ public class NewEditEvent extends AppCompatActivity {
     }
 
     private DatabaseReference getDatabaseReference() {
-        FirebaseDatabase database = FirebaseDatabaseSingleton.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference events = database.getReference(getString(R.string.db_events));
         DatabaseReference userEvents = events.child(mUser.getUid());
         return userEvents;

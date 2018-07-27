@@ -68,7 +68,7 @@ public class EventService extends IntentService {
     private void handleActionUpdateEventWidgets() {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        FirebaseDatabase database = FirebaseDatabaseSingleton.getInstance();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference events = database.getReference(getString(R.string.db_events));
         DatabaseReference userUid = events.child(mUser.getUid());
         Query orderByDate = userUid.orderByChild(getString(R.string.db_date_in_milliseconds)).limitToFirst(1);
