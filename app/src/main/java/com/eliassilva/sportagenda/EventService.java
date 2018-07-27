@@ -81,7 +81,7 @@ public class EventService extends IntentService {
 
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(EventService.this);
                 int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(EventService.this, EventWidgetProvider.class));
-                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_sport_tv);
+                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.event_widget_layout);
                 EventWidgetProvider.updateEventWidget(EventService.this, appWidgetIds, appWidgetManager, mEvent, mNextEventKey);
             }
 

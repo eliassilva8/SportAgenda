@@ -1,5 +1,7 @@
 package com.eliassilva.sportagenda;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -138,6 +140,11 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
                             startActivity(intent);
                         }
                     });
+            Intent intent = new Intent(this, EventWidgetProvider.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), EventWidgetProvider.class));
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+            sendBroadcast(intent);
             return true;
         } else {
             return false;
