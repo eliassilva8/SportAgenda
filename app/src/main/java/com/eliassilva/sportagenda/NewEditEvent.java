@@ -55,6 +55,9 @@ public class NewEditEvent extends AppCompatActivity {
         setContentView(R.layout.activity_new_edit_event);
         ButterKnife.bind(this);
 
+        mLocalInput.setHint(getString(R.string.default_local_value));
+        mParticipantsInput.setHint(getString(R.string.default_participants_value));
+
         Intent intent = getIntent();
         mCurrentEvent = intent.getParcelableExtra(getString(R.string.event));
         mCurrentEventKey = intent.getStringExtra(getString(R.string.eventKey));
@@ -114,28 +117,42 @@ public class NewEditEvent extends AppCompatActivity {
                 public void onClick(View v) {
                     DatabaseReference userEvents = getDatabaseReference();
                     DatabaseReference eventKey = userEvents.push();
-                    eventKey.child(getString(R.string.db_sports)).setValue(mSportInput.getText().toString());
-                    eventKey.child(getString(R.string.db_date)).setValue(mDateInpute.getText().toString());
-                    eventKey.child(getString(R.string.db_time)).setValue(mTimeInput.getText().toString());
-                    eventKey.child(getString(R.string.db_local)).setValue(mLocalInput.getText().toString());
-                    eventKey.child(getString(R.string.db_participants)).setValue(mParticipantsInput.getText().toString());
 
-                    String dateAndTime = mDateInpute.getText().toString() + " " + mTimeInput.getText().toString();
-                    SimpleDateFormat format = new SimpleDateFormat(getString(R.string.date_format) + " " + getString(R.string.time_format));
-                    Date dateFormated = null;
-                    try {
-                        dateFormated = format.parse(dateAndTime);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    long milliseconds = dateFormated.getTime();
-                    eventKey.child(getString(R.string.db_date_in_milliseconds)).setValue(milliseconds);
+                    if (mSportInput.getText().toString().equals("") || mDateInpute.getText().toString().equals("") || mTimeInput.getText().toString().equals("")) {
+                        Toast.makeText(NewEditEvent.this, getString(R.string.empty_field_error), Toast.LENGTH_LONG).show();
+                    } else {
+                        eventKey.child(getString(R.string.db_sports)).setValue(mSportInput.getText().toString());
+                        eventKey.child(getString(R.string.db_date)).setValue(mDateInpute.getText().toString());
+                        eventKey.child(getString(R.string.db_time)).setValue(mTimeInput.getText().toString());
 
-                    if (setEmailIntent() != null) {
-                        startActivity(setEmailIntent());
+                        String dateAndTime = mDateInpute.getText().toString() + " " + mTimeInput.getText().toString();
+                        SimpleDateFormat format = new SimpleDateFormat(getString(R.string.date_format) + " " + getString(R.string.time_format));
+                        Date dateFormated = null;
+                        try {
+                            dateFormated = format.parse(dateAndTime);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        long milliseconds = dateFormated.getTime();
+                        eventKey.child(getString(R.string.db_date_in_milliseconds)).setValue(milliseconds);
+
+                        if (mLocalInput.getText().toString().equals("")) {
+                            mLocalInput.setText(getString(R.string.default_local_value));
+                        }
+                        eventKey.child(getString(R.string.db_local)).setValue(mLocalInput.getText().toString());
+
+                        if (mParticipantsInput.getText().toString().equals("")) {
+                            mParticipantsInput.setText(getString(R.string.default_participants_value));
+                        }
+                        eventKey.child(getString(R.string.db_participants)).setValue(mParticipantsInput.getText().toString());
+
+                        Intent intent = new Intent(NewEditEvent.this, MainActivity.class);
+                        startActivity(intent);
+
+                        if (setEmailIntent() != null) {
+                            startActivity(setEmailIntent());
+                        }
                     }
-                    Intent intent = new Intent(NewEditEvent.this, MainActivity.class);
-                    startActivity(intent);
                 }
             });
         } else {
@@ -164,7 +181,7 @@ public class NewEditEvent extends AppCompatActivity {
                     DatabaseReference userEvents = getDatabaseReference();
                     DatabaseReference eventToDelete = userEvents.child(mCurrentEventKey);
                     eventToDelete.removeValue();
-                    Toast.makeText(NewEditEvent.this, getString(R.string.event_deleted), Toast.LENGTH_LONG).show();
+                    Toast.makeText(NewEditEvent.this, getString(R.string.event_deleted), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(NewEditEvent.this, MainActivity.class);
                     startActivity(intent);
                 }
@@ -185,10 +202,6 @@ public class NewEditEvent extends AppCompatActivity {
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.email_subject));
         emailIntent.putExtra(Intent.EXTRA_TEXT, setEmailBody());
         if (emailIntent.resolveActivity(getPackageManager()) != null) {
-            if (mSportInput.getText().toString().equals("")) {
-                Toast.makeText(NewEditEvent.this, getString(R.string.sport_field_empty), Toast.LENGTH_LONG).show();
-                return null;
-            }
             return emailIntent;
         }
         return null;

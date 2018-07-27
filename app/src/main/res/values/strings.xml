@@ -7,7 +7,6 @@
     <string name="local">Local:</string>
     <string name="participants">Nº of Participants</string>
     <string name="email_subject">SportAgenda event</string>
-    <string name="sport_field_empty">Sport field is empty!</string>
     <string name="date_format">dd/MM/yy</string>
     <string name="time_format">H:mm</string>
     <string name="db_events">events</string>
@@ -28,4 +27,7 @@
     <string name="eventKey">eventKey</string>
     <string name="event_deleted">Event deleted!</string>
     <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="empty_field_error">Please fill in the empty fields</string>
+    <string name="default_local_value">To be defined</string>
+    <string name="default_participants_value">No limit</string>
 </resources>
