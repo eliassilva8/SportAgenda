@@ -1,20 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:id="@+id/event_icon_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/event_sport_icon"
+        android:src="@drawable/ic_baseline_directions_run_24px"
+        app:layout_constraintBottom_toTopOf="@+id/separator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/rv_sport_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/edge_margin"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="@dimen/edge_margin"
         android:ellipsize="end"
         android:maxLines="1"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/event_icon_iv"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Soccer" />
 
@@ -36,6 +47,7 @@
         app:layout_constraintEnd_toEndOf="@+id/rv_date_tv"
         app:layout_constraintStart_toStartOf="@+id/rv_date_tv"
         app:layout_constraintTop_toBottomOf="@+id/rv_date_tv"
+        app:layout_constraintBottom_toTopOf="@+id/separator"
         tools:text="10:00" />
 
     <TextView
@@ -48,7 +60,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="2"
-        app:layout_constraintBottom_toBottomOf="@+id/rv_time_tv"
+        app:layout_constraintBottom_toTopOf="@+id/separator"
         app:layout_constraintEnd_toStartOf="@+id/rv_date_tv"
         app:layout_constraintStart_toEndOf="@+id/rv_sport_tv"
         app:layout_constraintTop_toTopOf="parent"
@@ -56,12 +68,24 @@
 
     <TextView
         android:id="@+id/rv_participants_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/inter_item_margin"
-        app:layout_constraintEnd_toEndOf="@+id/rv_sport_tv"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:layout_constraintBottom_toTopOf="@+id/separator"
+        app:layout_constraintEnd_toStartOf="@+id/rv_local_tv"
         app:layout_constraintStart_toStartOf="@+id/rv_sport_tv"
         app:layout_constraintTop_toBottomOf="@+id/rv_sport_tv"
-        tools:text="10" />
+        tools:text="No limit" />
+
+    <TextView
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@+id/rv_local_tv"
+        app:layout_constraintTop_toBottomOf="@+id/rv_local_tv" />
 
 </android.support.constraint.ConstraintLayout>

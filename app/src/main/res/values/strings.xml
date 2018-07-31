@@ -31,4 +31,5 @@
     <string name="default_local_value">To be defined</string>
     <string name="default_participants_value">No limit</string>
     <string name="no_internet_connection">Please turn in an internet connection</string>
+    <string name="event_sport_icon">Event sport icon</string>
 </resources>

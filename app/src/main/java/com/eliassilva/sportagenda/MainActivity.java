@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
     FirebaseUser mUser;
     FirebaseDatabase mDatabase;
     private NetworkReceiver mReceiver;
+    LinearLayoutManager mLayoutManager;
+    EventAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +71,10 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
         this.registerReceiver(mReceiver, filter);
         mReceiver.setNetworkReceiverListener(this);
 
-        mDatabase = FirebaseDatabase.getInstance();
-        mDatabase.setPersistenceEnabled(true);
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mAdapter = new EventAdapter(mEvents, this, mEventsKeys);
+
+
     }
 
     @Override
@@ -122,14 +126,18 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
             } else {
                 mNewEventFab.setVisibility(View.GONE);
                 mEventsRecyclerView.setVisibility(View.GONE);
-                mAdView.setVisibility(View.GONE);
+                mAdView.setVisibility(View.INVISIBLE);
                 mEmptyView.setVisibility(View.VISIBLE);
             }
 
         } else {
             if (!mReceiver.isConnected(this)) {
-                mAdView.setVisibility(View.GONE);
+                mAdView.setVisibility(View.INVISIBLE);
                 mEmptyView.setVisibility(View.GONE);
+
+                emptyLists();
+                setDisplay(mLayoutManager, mAdapter);
+
             } else {
                 mNewEventFab.setVisibility(View.VISIBLE);
                 mEventsRecyclerView.setVisibility(View.VISIBLE);
@@ -139,58 +147,68 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
                 AdRequest adRequest = new AdRequest.Builder().build();
                 mAdView.loadAd(adRequest);
 
-                LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-                mEventsRecyclerView.setLayoutManager(layoutManager);
-                mEventsRecyclerView.setHasFixedSize(true);
-                mEventsRecyclerView.setNestedScrollingEnabled(false);
-
-                final EventAdapter mAdapter = new EventAdapter(mEvents, this, mEventsKeys);
-                mEventsRecyclerView.setAdapter(mAdapter);
-
-                final DatabaseReference events = mDatabase.getReference(getString(R.string.db_events));
-                DatabaseReference userUid = events.child(mUser.getUid());
-                Query orderByDate = userUid.orderByChild(getString(R.string.db_date_in_milliseconds));
-
-                ChildEventListener eventListener = new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Event newEvent = dataSnapshot.getValue(Event.class);
-                        String eventKey = dataSnapshot.getKey();
-                        mEvents.add(newEvent);
-                        mEventsKeys.add(eventKey);
-                        mAdapter.setEventData(mEvents, mEventsKeys);
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                };
-                orderByDate.addChildEventListener(eventListener);
-
-                mNewEventFab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(MainActivity.this, NewEditEvent.class);
-                        startActivity(intent);
-                    }
-                });
+                emptyLists();
+                setDisplay(mLayoutManager, mAdapter);
             }
         }
     }
+
+    private void emptyLists() {
+        mEvents = new ArrayList<>();
+        mEventsKeys = new ArrayList<>();
+    }
+
+    private void setDisplay(LinearLayoutManager layoutManager, EventAdapter adapter) {
+        mEventsRecyclerView.setLayoutManager(layoutManager);
+        mEventsRecyclerView.setHasFixedSize(true);
+        mEventsRecyclerView.setNestedScrollingEnabled(false);
+
+        mEventsRecyclerView.setAdapter(adapter);
+
+        mDatabase = FirebaseDatabase.getInstance();
+        final DatabaseReference events = mDatabase.getReference(getString(R.string.db_events));
+        DatabaseReference userUid = events.child(mUser.getUid());
+        Query orderByDate = userUid.orderByChild(getString(R.string.db_date_in_milliseconds));
+
+        ChildEventListener eventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Event newEvent = dataSnapshot.getValue(Event.class);
+                String eventKey = dataSnapshot.getKey();
+                mEvents.add(newEvent);
+                mEventsKeys.add(eventKey);
+                mAdapter.setEventData(mEvents, mEventsKeys);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        orderByDate.addChildEventListener(eventListener);
+
+        mNewEventFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, NewEditEvent.class);
+                startActivity(intent);
+            }
+        });
+    }
+
 }
