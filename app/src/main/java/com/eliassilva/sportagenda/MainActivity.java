@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
         ButterKnife.bind(this);
 
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance();
 
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         mReceiver = new NetworkReceiver();
@@ -73,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
 
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mAdapter = new EventAdapter(mEvents, this, mEventsKeys);
-
-
     }
 
     @Override
@@ -165,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
 
         mEventsRecyclerView.setAdapter(adapter);
 
-        mDatabase = FirebaseDatabase.getInstance();
         final DatabaseReference events = mDatabase.getReference(getString(R.string.db_events));
         DatabaseReference userUid = events.child(mUser.getUid());
         Query orderByDate = userUid.orderByChild(getString(R.string.db_date_in_milliseconds));

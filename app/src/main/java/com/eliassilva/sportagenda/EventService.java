@@ -32,6 +32,7 @@ public class EventService extends IntentService {
     FirebaseUser mUser;
     String mNextEventKey;
     Event mEvent;
+    public static final String ACTION_UPDATE_WIDGETS = "com.eliassilva.sportagenda.action.update_widgets";
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -109,10 +110,12 @@ public class EventService extends IntentService {
     }
 
     public static void startActionUpdateEvent(Context context) {
+        Intent intent = new Intent(context, EventService.class);
+        intent.setAction(ACTION_UPDATE_WIDGETS);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(new Intent(context, EventService.class));
+            context.startForegroundService(intent);
         } else {
-            context.startService(new Intent(context, EventService.class));
+            context.startService(intent);
         }
     }
 }
