@@ -3,8 +3,6 @@ package com.eliassilva.sportagenda;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
 /**
  * Created by Elias on 12/07/2018.
  */

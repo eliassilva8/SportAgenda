@@ -3,10 +3,8 @@ package com.eliassilva.sportagenda;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -45,9 +43,9 @@ public class NewEditEvent extends AppCompatActivity {
     EditText mTimeInput;
     @BindView(R.id.participants_input_et)
     EditText mParticipantsInput;
-    Event mCurrentEvent;
-    FirebaseUser mUser;
-    String mCurrentEventKey;
+    private Event mCurrentEvent;
+    private FirebaseUser mUser;
+    private String mCurrentEventKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

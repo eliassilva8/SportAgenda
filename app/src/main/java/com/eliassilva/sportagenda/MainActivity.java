@@ -1,7 +1,5 @@
 package com.eliassilva.sportagenda;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -10,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,10 +29,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,13 +44,13 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
     TextView mEmptyView;
     @BindView(R.id.adView)
     AdView mAdView;
-    List<Event> mEvents = new ArrayList<>();
-    List<String> mEventsKeys = new ArrayList<>();
-    FirebaseUser mUser;
-    FirebaseDatabase mDatabase;
+    private List<Event> mEvents = new ArrayList<>();
+    private List<String> mEventsKeys = new ArrayList<>();
+    private FirebaseUser mUser;
+    private FirebaseDatabase mDatabase;
     private NetworkReceiver mReceiver;
-    LinearLayoutManager mLayoutManager;
-    EventAdapter mAdapter;
+    private LinearLayoutManager mLayoutManager;
+    private EventAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
