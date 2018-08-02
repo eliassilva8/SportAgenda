@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -147,8 +148,8 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
     }
 
     private void emptyLists() {
-        mEvents = new ArrayList<>();
-        mEventsKeys = new ArrayList<>();
+        mEvents.clear();
+        mEventsKeys.clear();
     }
 
     private void setDisplay(LinearLayoutManager layoutManager, EventAdapter adapter) {
@@ -161,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements EventAdapter.Even
         final DatabaseReference events = mDatabase.getReference(getString(R.string.db_events));
         DatabaseReference userUid = events.child(mUser.getUid());
         Query orderByDate = userUid.orderByChild(getString(R.string.db_date_in_milliseconds));
+        Log.d("UserUid", userUid.getKey());
 
         ChildEventListener eventListener = new ChildEventListener() {
             @Override

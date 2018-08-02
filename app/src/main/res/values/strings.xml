@@ -32,4 +32,16 @@
     <string name="default_participants_value">No limit</string>
     <string name="no_internet_connection">Please turn in an internet connection</string>
     <string name="event_sport_icon">Event sport icon</string>
+    <string name="email_content"><![CDATA[
+                <h1 style="color: #5e9ca0;">SportAgenda <span style="color: #2b2301;">
+                <p>Hello Sportsman. I would like to invite you to participate in my event.<p>
+                <h4 style="color: #2e6c80;">Event details:</h4>
+                <ol style="list-style: none; font-size: 14px; line-height: 32px; font-weight: bold;">
+                <li style="clear: both;">Sport:  %s </li>
+                <li style="clear: both;">Date:  %s </li>
+                <li style="clear: both;">Time:  %s </li>
+                <li style="clear: both;">Local:  %s</li>
+                <li style="clear: both;">Nº of Participants: %s </li>
+               </ol>
+    ]]></string>
 </resources>

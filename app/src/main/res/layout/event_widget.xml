@@ -42,7 +42,7 @@
                 android:padding="@dimen/widget_padding"
                 android:layout_weight="0.5"
                 android:gravity="start"
-                android:textSize="11sp"
+                android:textSize="13sp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/text_color"/>
@@ -54,7 +54,7 @@
                 android:layout_weight="0.5"
                 android:padding="@dimen/widget_padding"
                 android:gravity="end"
-                android:textSize="9sp"
+                android:textSize="11sp"
                 android:textColor="@color/text_color"/>
         </LinearLayout>
 
@@ -71,7 +71,7 @@
                 android:padding="@dimen/widget_padding"
                 android:layout_weight="0.3"
                 android:gravity="start"
-                android:textSize="11sp"
+                android:textSize="13sp"
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textColor="@color/text_color"/>
@@ -83,7 +83,7 @@
                 android:padding="@dimen/widget_padding"
                 android:layout_weight="0.7"
                 android:gravity="end"
-                android:textSize="9sp"
+                android:textSize="11sp"
                 android:textColor="@color/text_color"/>
         </LinearLayout>
     </LinearLayout>

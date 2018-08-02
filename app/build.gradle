@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'key0'
             keyPassword 'generic'
-            storeFile file('C:/Users/Altran/keystores/generic.jks')
+            storeFile file("generic.jks")
             storePassword 'generic'
         }
     }

@@ -3,6 +3,7 @@ package com.eliassilva.sportagenda;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -162,16 +163,11 @@ public class NewEditEvent extends AppCompatActivity {
             mLocalInput.setText(mCurrentEvent.local);
             mParticipantsInput.setText(mCurrentEvent.participants);
 
-            mSportInput.setFocusable(false);
-            mSportInput.setClickable(false);
-            mDateInpute.setFocusable(false);
-            mDateInpute.setClickable(false);
-            mTimeInput.setFocusable(false);
-            mTimeInput.setClickable(false);
-            mLocalInput.setFocusable(false);
-            mLocalInput.setClickable(false);
-            mParticipantsInput.setFocusable(false);
-            mParticipantsInput.setClickable(false);
+            disableEditText(mSportInput);
+            disableEditText(mDateInpute);
+            disableEditText(mTimeInput);
+            disableEditText(mLocalInput);
+            disableEditText(mParticipantsInput);
 
             mDeleteFab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -185,6 +181,15 @@ public class NewEditEvent extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void disableEditText(EditText editText) {
+        editText.setFocusable(false);
+        editText.setEnabled(false);
+        editText.setClickable(false);
+        editText.setCursorVisible(false);
+        editText.setKeyListener(null);
+        editText.setBackgroundColor(Color.TRANSPARENT);
     }
 
     private DatabaseReference getDatabaseReference() {
@@ -206,17 +211,13 @@ public class NewEditEvent extends AppCompatActivity {
     }
 
     private Spanned setEmailBody() {
-        return Html.fromHtml(new StringBuilder()
-                .append("<h1 style=\"color: #5e9ca0;\">SportAgenda <span style=\"color: #2b2301;\">")
-                .append("<p>Hello Sportsman. I would like to invite you to participate in my event.<p>")
-                .append("<h4 style=\"color: #2e6c80;\">Event details:</h4>")
-                .append("<ol style=\"list-style: none; font-size: 14px; line-height: 32px; font-weight: bold;\">\n" +
-                        "<li style=\"clear: both;\">Sport: " + mSportInput.getText().toString() + "</li>\n" +
-                        "  <li style=\"clear: both;\">Date: " + mDateInpute.getText().toString() + "</li>\n" +
-                        "  <li style=\"clear: both;\">Time: " + mTimeInput.getText().toString() + "</li>\n" +
-                        "  <li style=\"clear: both;\">Local: " + mLocalInput.getText().toString() + "</li>\n" +
-                        "  <li style=\"clear: both;\">Nº of Participants: " + mParticipantsInput.getText().toString() + "</li>\n" +
-                        "</ol>")
-                .toString());
+        String emailContent = getString(R.string.email_content, new String[]{
+                mSportInput.getText().toString(),
+                mDateInpute.getText().toString(),
+                mTimeInput.getText().toString(),
+                mLocalInput.getText().toString(),
+                mParticipantsInput.getText().toString()
+        });
+        return Html.fromHtml(emailContent);
     }
 }
